@@ -47,32 +47,35 @@ class _CurrentWeatherCardState extends State<CurrentWeatherCard> {
             return Column(
               children: [
                 VerticalSpace(size: context.height(.05)),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                      onPressed: () async {
-                        permission = await Geolocator.requestPermission();
-                        if (permission != LocationPermission.denied) {
-                          await Geolocator.getCurrentPosition(
-                                  desiredAccuracy: LocationAccuracy.high)
-                              .then((value) {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LocationWeatherScreen(
-                                    lat: value.latitude.toString(),
-                                    lon: value.longitude.toString(),
-                                  ),
-                                ));
-                            return;
-                          });
-                        }
-                      },
-                      icon: Icon(
-                        Icons.location_on_outlined,
-                        color: red,
-                        size: context.width(.07),
-                      )),
+                Padding(
+                  padding: EdgeInsets.only(right: context.width(.05)),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                        onPressed: () async {
+                          permission = await Geolocator.requestPermission();
+                          if (permission != LocationPermission.denied) {
+                            await Geolocator.getCurrentPosition(
+                                    desiredAccuracy: LocationAccuracy.high)
+                                .then((value) {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LocationWeatherScreen(
+                                      lat: value.latitude.toString(),
+                                      lon: value.longitude.toString(),
+                                    ),
+                                  ));
+                              return;
+                            });
+                          }
+                        },
+                        icon: Icon(
+                          Icons.location_on_outlined,
+                          color: red,
+                          size: context.width(.1),
+                        )),
+                  ),
                 ),
                 VerticalSpace(size: context.height(.1)),
                 Text(
@@ -131,6 +134,10 @@ class _CurrentWeatherCardState extends State<CurrentWeatherCard> {
                 )
               ],
             );
+          }
+          if (state is FetchCurrentWeatherError) {
+            return ErrorWidget.withDetails(
+                message: "An error occurred. Check your internet");
           }
           return const SizedBox.shrink();
         },

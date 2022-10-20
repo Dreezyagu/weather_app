@@ -1,6 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-
 import 'package:weather_app/models/coordinates_model.dart';
 import 'package:weather_app/models/temperature_model.dart';
 import 'package:weather_app/models/weather_model.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/DI/injector_container.dart';
+import 'package:weather_app/UI/widgets/cities_card.dart';
 import 'package:weather_app/UI/widgets/current_weather_card.dart';
 import 'package:weather_app/cubits/carousel_weather/carousel_weathers_cubit.dart';
 import 'package:weather_app/cubits/fetch_cities/fetch_cities_cubit.dart';
@@ -96,54 +97,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                         final onDisplay = displayCities
                                             .map((e) => e.city)
                                             .contains(city.city);
-                                        return InkWell(
-                                          enableFeedback: false,
-                                          onTap: () {
-                                            if (onDisplay) {
-                                              injector
-                                                  .get<CarouselWeathersCubit>()
-                                                  .removeCity(city.city!);
-                                            } else {
-                                              injector
-                                                  .get<CarouselWeathersCubit>()
-                                                  .addCity(city.city!);
-                                            }
-                                          },
-                                          child: Card(
-                                            color: onDisplay
-                                                ? red
-                                                : Colors.transparent,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                side: BorderSide(
-                                                    width: 1,
-                                                    color: onDisplay
-                                                        ? Colors.transparent
-                                                        : white
-                                                            .withOpacity(.5))),
-                                            child: Center(
-                                                child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: context
-                                                                .width(.01)),
-                                                    child: Text(
-                                                      city.city ?? "",
-                                                      style: TextStyle(
-                                                          color: white,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize: context
-                                                              .width(.04)),
-                                                    ))),
-                                          ),
-                                        );
+                                        return CitiesCard(
+                                            onDisplay: onDisplay, city: city);
                                       },
                                     ),
                                   );
                                 },
                               );
+                            }
+                            if (state is FetchCitiesError) {
+                              return ErrorWidget.withDetails(
+                                  message:
+                                      "An error occurred. Check your internet");
                             }
                             return const SizedBox.shrink();
                           },
@@ -153,6 +118,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               );
+            }
+            if (state is CarouselWeathersError) {
+              return ErrorWidget.withDetails(
+                  message: "An error occurred. Check your internet");
             }
             return const SizedBox.shrink();
           },

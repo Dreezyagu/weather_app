@@ -1,8 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class CitiesModel {
-  // final int id;
   final String? city;
   final String? lat;
   final String? lng;
@@ -26,7 +24,6 @@ class CitiesModel {
       city: map['city'] != null ? map['city'] as String : null,
       lat: map['lat'] != null ? map['lat'] as String : null,
       lng: map['lng'] != null ? map['lng'] as String : null,
-      // id: map['id'],
     );
   }
 

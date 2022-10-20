@@ -29,8 +29,5 @@ class FetchCitiesCubit extends Cubit<FetchCitiesState> {
       _cities.value.removeWhere((e) => e.city == element.city);
     }
     _cities.value.insertAll(0, displayCities);
-
-    // emit(FetchCitiesLoading());
-    // emit(FetchCitiesLoaded(cities));
   }
 }

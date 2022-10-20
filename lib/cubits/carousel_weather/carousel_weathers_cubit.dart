@@ -45,7 +45,7 @@ class CarouselWeathersCubit extends Cubit<CarouselWeathersState> {
       return;
     }
     final city = cities.firstWhere((element) => element.city == name);
-    cityToDisplay.add(city);
+    cityToDisplay.insert(0, city);
     persistCities(cityToDisplay);
     injector.get<FetchCitiesCubit>().arrange(cityToDisplay);
     emit(CarouselWeathersLoaded(cityToDisplay));

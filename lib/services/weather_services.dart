@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:tuple/tuple.dart';
 import 'package:weather_app/models/weather_response_model.dart';
@@ -23,7 +21,6 @@ class WeatherServices {
         return const Tuple2(null, "An error occurred");
       }
     } catch (e) {
-      log(e.toString());
       return const Tuple2(null, "An error occurred");
     }
   }
