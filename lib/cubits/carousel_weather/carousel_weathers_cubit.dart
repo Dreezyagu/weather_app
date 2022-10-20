@@ -1,6 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:weather_app/DI/injector_container.dart';
+import 'package:weather_app/cubits/fetch_cities/fetch_cities_cubit.dart';
 import 'package:weather_app/models/cities_model.dart';
 import 'package:weather_app/services/cities_services.dart';
+import 'package:weather_app/utils/storage_helper.dart';
+import 'package:weather_app/utils/storage_keys.dart';
 
 part 'carousel_weathers_state.dart';
 
@@ -10,29 +14,50 @@ class CarouselWeathersCubit extends Cubit<CarouselWeathersState> {
   List<CitiesModel> cityToDisplay = [];
   final cities = CitiesServices().getCities()!;
 
-  init(List<int> indices) {
-    for (var i = 0; i < indices.length; i++) {
-      final city = cities.firstWhere((element) => element.id == indices[i]);
+  void init() async {
+    var persistedCities =
+        (await getPersistedCities()) ?? ["Lagos", "Abuja", "Ibadan"];
+    for (var i = 0; i < persistedCities.length; i++) {
+      final city = cities.firstWhere(
+          (element) => element.city.toString() == persistedCities[i]);
       cityToDisplay.add(city);
     }
+    persistCities(cityToDisplay);
+    injector.get<FetchCitiesCubit>().arrange(cityToDisplay);
     emit(CarouselWeathersLoaded(cityToDisplay));
   }
 
-  addCity(int index) {
+  Future<List<String>?> getPersistedCities() async {
+    return await StorageHelper.getStringList(StorageKeys.persistCities);
+  }
+
+  void persistCities(List<CitiesModel> cities) {
+    final List<String> cityIdToString = cityToDisplay
+        .map(
+          (e) => e.city!,
+        )
+        .toList();
+    StorageHelper.setStringList(StorageKeys.persistCities, cityIdToString);
+  }
+
+  void addCity(String name) {
     if (cityToDisplay.length >= 3) {
       return;
     }
-    final city = cities.firstWhere((element) => element.id == index);
+    final city = cities.firstWhere((element) => element.city == name);
     cityToDisplay.add(city);
-
+    persistCities(cityToDisplay);
+    injector.get<FetchCitiesCubit>().arrange(cityToDisplay);
     emit(CarouselWeathersLoaded(cityToDisplay));
   }
 
-  removeCity(int index) {
-    if (cityToDisplay.length == 1 || index == 0) {
-      return 0;
+  void removeCity(String name) {
+    if (cityToDisplay.length == 1 || name == "Lagos") {
+      return;
     }
-    cityToDisplay.removeWhere((element) => element.id == index);
+    cityToDisplay.removeWhere((element) => element.city == name);
+    persistCities(cityToDisplay);
+    injector.get<FetchCitiesCubit>().arrange(cityToDisplay);
     emit(CarouselWeathersLoaded(cityToDisplay));
   }
 }

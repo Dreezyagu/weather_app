@@ -2,15 +2,23 @@
 import 'dart:convert';
 
 class CitiesModel {
-  final int id;
+  // final int id;
   final String? city;
   final String? lat;
   final String? lng;
 
-  CitiesModel({this.city, this.lat, this.lng, required this.id});
+  CitiesModel({
+    this.city,
+    this.lat,
+    this.lng,
+  });
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{'city': city, 'lat': lat, 'lng': lng, 'id': id};
+    return <String, dynamic>{
+      'city': city,
+      'lat': lat,
+      'lng': lng,
+    };
   }
 
   factory CitiesModel.fromMap(Map<String, dynamic> map) {
@@ -18,7 +26,7 @@ class CitiesModel {
       city: map['city'] != null ? map['city'] as String : null,
       lat: map['lat'] != null ? map['lat'] as String : null,
       lng: map['lng'] != null ? map['lng'] as String : null,
-      id: map['id'],
+      // id: map['id'],
     );
   }
 
@@ -29,6 +37,6 @@ class CitiesModel {
 
   @override
   String toString() {
-    return 'CitiesModel(id: $id, city: $city, lat: $lat, lng: $lng)';
+    return 'CitiesModel( city: $city, lat: $lat, lng: $lng)';
   }
 }

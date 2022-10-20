@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/DI/injector_container.dart';
 import 'package:weather_app/cubits/fetch_current_weather/fetch_current_weather_cubit.dart';
+import 'package:weather_app/utils/colors.dart';
+import 'package:weather_app/utils/extensions.dart';
+import 'package:weather_app/utils/spaces.dart';
 
 class LocationWeatherScreen extends StatefulWidget {
   final String lat;
@@ -27,19 +30,56 @@ class _LocationWeatherScreenState extends State<LocationWeatherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(gradient: homeGradient),
         child: BlocBuilder<FetchCurrentWeatherCubit, FetchCurrentWeatherState>(
           bloc: _fetchCurrentWeatherCubit
             ..getCurrentWeather(lat: widget.lat, lon: widget.lon),
           builder: (context, state) {
             if (state is FetchCurrentWeatherLoading) {
-              return const CircularProgressIndicator();
+              return const Center(
+                  child: CircularProgressIndicator(
+                color: white,
+              ));
             }
             if (state is FetchCurrentWeatherLoaded) {
+              final main = state.weatherResponse.main;
+
               return Column(
                 children: [
-                  const Text("Your current location"),
-                  Text(state.weatherResponse.main.temp.toString()),
+                  VerticalSpace(size: context.height(.1)),
+                  Text(
+                    "Your current location:",
+                    style: TextStyle(
+                        color: white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: context.width(.08)),
+                  ),
+                  VerticalSpace(size: context.height(.01)),
+                  Text(
+                    "${main.temp?.round()}°",
+                    style: TextStyle(
+                        color: white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: context.width(.2)),
+                  ),
+                  Text(
+                    state.weatherResponse.weather.first.main ?? "",
+                    style: TextStyle(
+                        color: white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: context.width(.08)),
+                  ),
+                  VerticalSpace(size: context.height(.02)),
+                  Text(
+                    "High: ${main.tempMax?.round()}°   Low: ${main.tempMin?.round()}°",
+                    style: TextStyle(
+                        color: white,
+                        fontWeight: FontWeight.w400,
+                        fontSize: context.width(.04)),
+                  ),
                 ],
               );
             }
