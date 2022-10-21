@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:weather_app/DI/injector_container.dart';
 import 'package:weather_app/cubits/fetch_cities/fetch_cities_cubit.dart';
 import 'package:weather_app/models/cities_model.dart';
@@ -15,8 +16,7 @@ class CarouselWeathersCubit extends Cubit<CarouselWeathersState> {
   final cities = CitiesServices().getCities()!;
 
   void init() async {
-    var persistedCities =
-        (await getPersistedCities()) ?? ["Lagos", "Abuja", "Ibadan"];
+    var persistedCities = (await getPersistedCities()) ?? ["Lagos"];
     for (var i = 0; i < persistedCities.length; i++) {
       final city = cities.firstWhere(
           (element) => element.city.toString() == persistedCities[i]);
@@ -42,6 +42,9 @@ class CarouselWeathersCubit extends Cubit<CarouselWeathersState> {
 
   void addCity(String name) {
     if (cityToDisplay.length >= 3) {
+      Fluttertoast.showToast(
+          msg: "Carousel full. Remove a displayed city to add a new one",
+          toastLength: Toast.LENGTH_LONG);
       return;
     }
     final city = cities.firstWhere((element) => element.city == name);
@@ -52,7 +55,7 @@ class CarouselWeathersCubit extends Cubit<CarouselWeathersState> {
   }
 
   void removeCity(String name) {
-    if (cityToDisplay.length == 1 || name == "Lagos") {
+    if (cityToDisplay.length == 1) {
       return;
     }
     cityToDisplay.removeWhere((element) => element.city == name);
