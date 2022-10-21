@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:weather_app/DI/injector_container.dart';
-import 'package:weather_app/UI/screens/location_weather_screen.dart';
 import 'package:weather_app/cubits/fetch_current_weather/fetch_current_weather_cubit.dart';
 import 'package:weather_app/models/cities_model.dart';
 import 'package:weather_app/utils/colors.dart';
@@ -26,7 +25,6 @@ class CurrentWeatherCard extends StatefulWidget {
 
 class _CurrentWeatherCardState extends State<CurrentWeatherCard> {
   final FetchCurrentWeatherCubit _fetchCurrentWeatherCubit = injector.get();
-  LocationPermission? permission;
 
   @override
   Widget build(BuildContext context) {
@@ -46,46 +44,37 @@ class _CurrentWeatherCardState extends State<CurrentWeatherCard> {
             final main = state.weatherResponse.main;
             return Column(
               children: [
-                VerticalSpace(size: context.height(.05)),
-                Padding(
-                  padding: EdgeInsets.only(right: context.width(.05)),
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: IconButton(
-                        onPressed: () async {
-                          permission = await Geolocator.requestPermission();
-                          if (permission != LocationPermission.denied) {
-                            await Geolocator.getCurrentPosition(
-                                    desiredAccuracy: LocationAccuracy.high)
-                                .then((value) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LocationWeatherScreen(
-                                      lat: value.latitude.toString(),
-                                      lon: value.longitude.toString(),
-                                    ),
-                                  ));
-                              return;
-                            });
-                          }
-                        },
-                        icon: Icon(
-                          Icons.location_on_outlined,
-                          color: red,
-                          size: context.width(.1),
-                        )),
+                VerticalSpace(size: context.height(.08)),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: context.width(.04),
+                      vertical: context.height(.01)),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      gradient: locationGradient),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SvgPicture.asset("assets/icons/pin.svg"),
+                      Text(
+                        "  ${widget.city.city ?? ""}",
+                        style: TextStyle(
+                            color: white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: context.width(.04)),
+                      ),
+                    ],
                   ),
                 ),
-                VerticalSpace(size: context.height(.1)),
-                Text(
-                  widget.city.city ?? "",
-                  style: TextStyle(
-                      color: white,
-                      fontWeight: FontWeight.w400,
-                      fontSize: context.width(.08)),
+                VerticalSpace(size: context.height(.03)),
+                SvgPicture.asset(
+                  state.weatherResponse.weather.first.main?.toLowerCase() ==
+                          "rain"
+                      ? "assets/icons/rain.svg"
+                      : "assets/icons/sun.svg",
+                  height: context.height(.1),
                 ),
-                VerticalSpace(size: context.height(.01)),
+                VerticalSpace(size: context.height(.03)),
                 Text(
                   "${main.temp?.round()}°",
                   style: TextStyle(
@@ -98,15 +87,27 @@ class _CurrentWeatherCardState extends State<CurrentWeatherCard> {
                   style: TextStyle(
                       color: white,
                       fontWeight: FontWeight.w400,
-                      fontSize: context.width(.08)),
+                      fontSize: context.width(.05)),
                 ),
                 VerticalSpace(size: context.height(.02)),
-                Text(
-                  "High: ${main.tempMax?.round()}°   Low: ${main.tempMin?.round()}°",
-                  style: TextStyle(
-                      color: white,
-                      fontWeight: FontWeight.w400,
-                      fontSize: context.width(.04)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "     High: ${main.tempMax?.round()}°°",
+                      style: TextStyle(
+                          color: white,
+                          fontWeight: FontWeight.w300,
+                          fontSize: context.width(.04)),
+                    ),
+                    Text(
+                      "Low: ${main.tempMin?.round()}°     ",
+                      style: TextStyle(
+                          color: white,
+                          fontWeight: FontWeight.w300,
+                          fontSize: context.width(.04)),
+                    ),
+                  ],
                 ),
                 const Spacer(),
                 Row(
@@ -116,21 +117,21 @@ class _CurrentWeatherCardState extends State<CurrentWeatherCard> {
                     (index) => Padding(
                       padding: const EdgeInsets.all(2.0),
                       child: Container(
-                        width: widget.currentIndex == index ? 35 : 17,
-                        height: 6,
+                        width: widget.currentIndex == index ? 30 : 17,
+                        height: 8,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
                           border: Border.all(color: white.withOpacity(.5)),
                           color: widget.currentIndex == index
-                              ? white
-                              : Colors.transparent,
+                              ? blueDark
+                              : blueLight,
                         ),
                       ),
                     ),
                   ),
                 ),
                 VerticalSpace(
-                  size: context.height(.04),
+                  size: context.height(.02),
                 )
               ],
             );

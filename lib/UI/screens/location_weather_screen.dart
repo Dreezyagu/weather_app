@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:weather_app/DI/injector_container.dart';
 import 'package:weather_app/cubits/fetch_current_weather/fetch_current_weather_cubit.dart';
 import 'package:weather_app/utils/colors.dart';
@@ -30,6 +31,10 @@ class _LocationWeatherScreenState extends State<LocationWeatherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color(0xff1366F0),
+      ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -57,7 +62,15 @@ class _LocationWeatherScreenState extends State<LocationWeatherScreen> {
                         fontWeight: FontWeight.w400,
                         fontSize: context.width(.08)),
                   ),
-                  VerticalSpace(size: context.height(.01)),
+                  VerticalSpace(size: context.height(.02)),
+                  SvgPicture.asset(
+                    state.weatherResponse.weather.first.main?.toLowerCase() ==
+                            "rain"
+                        ? "assets/icons/rain.svg"
+                        : "assets/icons/sun.svg",
+                    height: context.height(.1),
+                  ),
+                  VerticalSpace(size: context.height(.02)),
                   Text(
                     "${main.temp?.round()}°",
                     style: TextStyle(

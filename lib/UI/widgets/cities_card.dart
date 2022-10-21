@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:weather_app/DI/injector_container.dart';
 import 'package:weather_app/models/cities_model.dart';
 import 'package:weather_app/utils/colors.dart';
@@ -18,33 +19,30 @@ class CitiesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      enableFeedback: false,
-      onTap: () {
-        if (onDisplay) {
-          injector.get<CarouselWeathersCubit>().removeCity(city.city!);
-        } else {
-          injector.get<CarouselWeathersCubit>().addCity(city.city!);
-        }
-      },
-      child: Card(
-        color: onDisplay ? red : Colors.transparent,
+    return Card(
+        margin: EdgeInsets.symmetric(vertical: context.height(.01)),
+        color: blackLight,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
-            side: BorderSide(
-                width: 1,
-                color: onDisplay ? Colors.transparent : white.withOpacity(.5))),
-        child: Center(
-            child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.width(.01)),
-                child: Text(
-                  city.city ?? "",
-                  style: TextStyle(
-                      color: white,
-                      fontWeight: FontWeight.w400,
-                      fontSize: context.width(.04)),
-                ))),
-      ),
-    );
+            side: const BorderSide(width: 1, color: Color(0xff011631))),
+        child: ListTile(
+          onTap: () {
+            if (onDisplay) {
+              injector.get<CarouselWeathersCubit>().removeCity(city.city!);
+            } else {
+              injector.get<CarouselWeathersCubit>().addCity(city.city!);
+            }
+          },
+          contentPadding: EdgeInsets.symmetric(
+              vertical: context.height(.01), horizontal: context.width(.04)),
+          title: Text(
+            city.city ?? "",
+            style: TextStyle(
+                color: grey,
+                fontWeight: FontWeight.w400,
+                fontSize: context.width(.045)),
+          ),
+          trailing: onDisplay ? SvgPicture.asset("assets/icons/pin.svg") : null,
+        ));
   }
 }
