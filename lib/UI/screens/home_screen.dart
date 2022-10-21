@@ -80,8 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       heightFactor: .45,
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: context.width(.04),
-                            vertical: context.height(.02)),
+                            horizontal: context.width(.04)),
                         child: BlocBuilder<FetchCitiesCubit, FetchCitiesState>(
                           builder: (context, viewState) {
                             if (viewState is FetchCitiesLoaded) {
